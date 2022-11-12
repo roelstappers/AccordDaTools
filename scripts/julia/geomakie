@@ -1,0 +1,18 @@
+
+
+using GeoMakie
+using CairoMakie
+
+fig = Figure()
+
+source = "+proj=lcc lat_1=60 lat_2=60"
+dest ="+proj=ortho"
+
+lonlims= (0,60)
+latlims (30,80)
+
+ga = GeoAxis(fig[1,1], source=source, dest=dest,coastlines=true,lonlims=lonlims,latlims=latlims)
+
+
+save("test.png',fig)
+
