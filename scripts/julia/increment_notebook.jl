@@ -46,7 +46,7 @@ end
 # ╔═╡ c3f176c8-a971-46fe-90f8-429c4d52a690
 begin
 	var="TEMPERATURE"
-	var="HUMI.SPECIFI"
+# 	var="HUMI.SPECIFI"
 	#var="WIND.U.PHYS"
 	field="S$lev$var" 
 end 
@@ -55,18 +55,19 @@ end
 md"# Plot"
 
 # ╔═╡ b6286944-48b8-4be0-8ce1-0938cbf2b7aa
-function plot(bg,an,field)
+function plot(fig,bg,an,field)
 	bgf = bg[field][:,:]
 	anf = an[field][:,:]
     inc = anf - bgf 
 
-    fig = Figure(resolution = (1800, 1500))
-    ax  = Axis3(
+    # fig = Figure(resolution = (1800, 1500))
+    ax  = LScene(
 		      fig[1,1],
         #       viewmode=:stretch,
 		#       viewmode=:fit,
             #  alignmode=Outside(), 
-		      aspect=Makie.DataAspect(), #(1,1,0.1),            
+		#       aspect=Makie.DataAspect(), #(1,1,0.1),            
+		#   protrusions=1,
               title="$field",		      
               elevation = pi/2, azimuth=-pi/2  ,                       
           )
@@ -86,9 +87,9 @@ function plot(bg,an,field)
               colormap=cmap,
 	          color=inc,
 	          colorrange=crange,
-	      #     shininess=30.0f0, 
-	          # transparancy=true,
-		       # diffuse=[0.4,0.4,0.4],
+	          # shininess=5.0f0, 
+	          #  transparancy=true,
+		       diffuse=[0.6,0.6,0.6],
 		      # shading=false,
 		       fxaa = true,
 		       ssao = true,
@@ -98,13 +99,22 @@ function plot(bg,an,field)
 
     Colorbar(fig[2,1], scene, vertical=false ,tellwidth=true) # Relative(0.8))
 	# colsize!(fig.layout, 1, Aspect(1, 1.0))
-	colsize!(fig.layout, 1, Aspect(1, 1.0))
+# 	colsize!(fig.layout, 1, Aspect(1, 1.0))
 	
     return fig	
 end 
 
 # ╔═╡ 0e366aa1-ac0f-49e9-856c-84d149ea1dd5
-display(plot(bg1,an1,field))
+begin 
+	fig = Figure(resolution = (1800, 1500)) 	
+	# plot(fig, bg1,an1,field)
+	plot(fig, bg2,an2,field)
+	display(fig)
+	
+end 
+
+# ╔═╡ 338a094a-423f-413c-95bf-b003f430ea27
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1547,10 +1557,11 @@ version = "3.5.0+0"
 # ╠═950ed624-df5b-11ed-070b-9f9fd7035d0c
 # ╟─237f3e59-ad94-4501-afd3-7fe7ff2eb6bd
 # ╠═c40d1c4f-a16f-412f-88a9-8afa9702d33f
-# ╟─d3ed5053-08de-421e-adf2-b845ac181445
+# ╠═d3ed5053-08de-421e-adf2-b845ac181445
 # ╠═c3f176c8-a971-46fe-90f8-429c4d52a690
 # ╟─8a2030c8-2454-4c83-9b16-414a0e31e3ff
 # ╠═b6286944-48b8-4be0-8ce1-0938cbf2b7aa
 # ╠═0e366aa1-ac0f-49e9-856c-84d149ea1dd5
+# ╠═338a094a-423f-413c-95bf-b003f430ea27
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
