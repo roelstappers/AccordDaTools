@@ -43,7 +43,7 @@ function makeprofplot(fig,bgds,ands,var,lev::Observable)
             yreversed=true,
             xticklabelsvisible=false,
             yticklabelsvisible=false,
-
+            width=100,
             yaxisposition = :right
          )
     val = zeros(nlev)
@@ -54,7 +54,7 @@ function makeprofplot(fig,bgds,ands,var,lev::Observable)
     end
     lines!(ax, val, 1:65, color=:red)
     pval = lift( lev -> val[lev], lev)
-    plt = scatter!(ax, pval, lev, color=:blue, markersize=10)
+    plt = scatter!(ax, pval, lev, color=:blue, markersize=20)
     # scatter!(plt, pval, lev)
     # scatter!(ax, val[lev.val], lev.val, color=:blue, markersize=10)
     ax         
@@ -65,16 +65,16 @@ fields= ["TEMPERATURE", "HUMI.SPECIFI","WIND.U.PHYS","WIND.V.PHYS"]
 
 set_theme!(theme_dark())
 fig = Figure() 
-s1 = Slider(fig[1:2,1], range = 65:-1:1, startvalue = 65,horizontal=false)
+s1 = Slider(fig[1:1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
 a1 = makesurfplot(fig[1,2],fields[1],s1.value,surfbg=true)
 a2 = makesurfplot(fig[1,3],fields[2],s1.value,surfbg=true)
 a3 = makesurfplot(fig[2,2],fields[3],s1.value,surfbg=true)
 a4 = makesurfplot(fig[2,3],fields[4],s1.value,surfbg=true)
 fig
 
-makeprofplot(fig[1,2,Right()],bgds,ands,fields[1],s1.value)
-makeprofplot(fig[1,3,Right()],bgds,ands,fields[2],s1.value)
-makeprofplot(fig[2,2,Right()],bgds,ands,fields[3],s1.value)
-ax = makeprofplot(fig[2,3,Right()],bgds,ands,fields[4],s1.value)
+px1 = makeprofplot(fig[1,2,Right()],bgds,ands,fields[1],s1.value)
+px2 = makeprofplot(fig[1,3,Right()],bgds,ands,fields[2],s1.value)
+px3 = makeprofplot(fig[2,2,Right()],bgds,ands,fields[3],s1.value)
+px4 = makeprofplot(fig[2,3,Right()],bgds,ands,fields[4],s1.value)
 fig
 
