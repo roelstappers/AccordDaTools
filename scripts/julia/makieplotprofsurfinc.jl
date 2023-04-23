@@ -10,18 +10,23 @@ ands = NCDataset("$archive/$an_filename")
 #bgds = NCDataset(ARGS[1])
 #ands = NCDataset(ARGS[2])
 
-function makesurfplot(fig,var,lev::Observable; surfbg=false)
+function makesurfplot(fig,bgds,ands,var,lev::Observable; surfbg=false,xrange=:,yrange=:)
 
     field = lift( lev -> "S$(lpad(lev,3,"0"))$var", lev)  # lev  = s1.value
-    title = lift( f  -> "$f" , field)  
+    title = lift( f  -> "$f" , field) 
+    pl = PointLight(Point3f(0), RGBf(20,20,20)) 
+    al = AmbientLight(RGBf(0.2,0.2,0.2))
     ax = Axis3(fig, 
-             title=title ,
-             viewmode  = :stretch,
-             elevation = pi/2, azimuth=-pi/2  ,                       
+         # show_axis = false,
+         # scenekw = (lights=[pl,al],)
+
+           title=title ,
+           viewmode  = :stretch,
+           elevation = pi/2, azimuth=-pi/2  ,                       
 
          )
-    bgf = lift( f -> bgds[f][:,:] , field) 
-    anf = lift( f -> ands[f][:,:] , field) 
+    bgf = lift( f -> bgds[f][xrange,yrange] , field) 
+    anf = lift( f -> ands[f][xrange,yrange] , field) 
     inc = lift( (an,bg) -> an-bg, anf, bgf)
     maxabsc = lift( x -> maximum(abs.(x)),inc)
     crange = lift( m -> (-m,m),  maxabsc) 
@@ -32,9 +37,10 @@ function makesurfplot(fig,var,lev::Observable; surfbg=false)
        colormap=Reverse(:RdBu),
        colorrange=crange
     )
-    hidedecorations!(ax)
+    # zlims!(minimum(bgf.val), maximum(bgf.val))
+   hidedecorations!(ax)
     hidespines!(ax)
-    ax         
+    ax ,surf       
 end
 
 function makeprofplot(fig,bgds,ands,var,lev::Observable)
@@ -61,15 +67,20 @@ function makeprofplot(fig,bgds,ands,var,lev::Observable)
 end
 
 
+
 fields= ["TEMPERATURE", "HUMI.SPECIFI","WIND.U.PHYS","WIND.V.PHYS"]
+ xrange=1:637; yrange=1:637   # All
+# xrange=100:350; yrange=350:600 # Norway coast 
+# xrange=100:400; yrange=1:300 # Germany
 
 set_theme!(theme_dark())
 fig = Figure() 
 s1 = Slider(fig[1:1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
-a1 = makesurfplot(fig[1,2],fields[1],s1.value,surfbg=true)
-a2 = makesurfplot(fig[1,3],fields[2],s1.value,surfbg=true)
-a3 = makesurfplot(fig[2,2],fields[3],s1.value,surfbg=true)
-a4 = makesurfplot(fig[2,3],fields[4],s1.value,surfbg=true)
+
+a1 = makesurfplot(fig[1,2],bgds,ands,fields[1],s1.value,surfbg=false ,xrange=xrange, yrange=yrange)
+a2 = makesurfplot(fig[1,3],bgds,ands,fields[2],s1.value,surfbg=true ,xrange=xrange, yrange=yrange)
+a3 = makesurfplot(fig[2,2],bgds,ands,fields[3],s1.value,surfbg=true)
+a4 = makesurfplot(fig[2,3],bgds,ands,fields[4],s1.value,surfbg=true)
 fig
 
 px1 = makeprofplot(fig[1,2,Right()],bgds,ands,fields[1],s1.value)
