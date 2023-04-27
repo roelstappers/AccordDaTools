@@ -82,7 +82,7 @@ end
 
 
 
-fields= ["TEMPERATURE", "HUMI.SPECIFI","WIND.U.PHYS","WIND.V.PHYS"]
+
  xrange=1:637; yrange=1:637   # All
 #xrange=100:350; yrange=350:600 # Norway coast 
 #xrange=200:350; yrange=450:600 # Norway mountains 
