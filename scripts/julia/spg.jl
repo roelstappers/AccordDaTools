@@ -1,4 +1,17 @@
 
+# using GaussianRandomFields
+
+# lengthscale=10
+# pts = range(0, stop=60, step=0.1) # Domain
+# cov = CovarianceFunction(2, Gaussian(lengthscale))   # 2D Gaussian covariance function 
+# grf = GaussianRandomField(cov, CirculantEmbedding(), pts, pts, minpadding=113) # 2D Gaussian random field
+# data = sample(grf) # Sample the random field
+
+#-----------------------------------------------
+
+
+
+
 using GaussianRandomFields
 using GLMakie
 fig=Figure()
