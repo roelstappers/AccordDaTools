@@ -1,16 +1,26 @@
 using GLMakie, NCDatasets, Statistics, Dates
 
+abstract type Archive end
+
+struct Metcoop <: Archive 
+    url::String
+end
+
+function Base.show(io::IO, a::Metcoop)
+    print(io, a.url)
+end
+
+# At MET use 
+archive=Metcoop("/lustre/storeB/immutable/archive/projects/metproduction/MEPS/") 
+# archive=Metcoop("https://thredds.met.no/thredds/dodsC/meps25epsarchive")
+
+# Read air_tem
 
 # Metcoop
 function thredds(dt) 
     x = 0:1:948;  y = 0:1:1068; lev = 0:1:64; fcint=Hour(3)
     vars = ["air_temperature_ml", "specific_humidity_ml","x_wind_ml","y_wind_ml"]
     var = vars[1]
-  #  https://thredds.met.no/thredds/dodsC/meps25epsarchive/2023/05/01/meps_det_2_5km_20230501T06Z.nc?time[0:1:66]
-   
-#  https://thredds.met.no/thredds/dodsC/meps25epsarchive/2023/05/01/meps_det_2_5km_20230501T06Z.nc?air_temperature_ml[0:1:3][0:1:65][0:1:1000][0:1:900]
-#  https://thredds.met.no/thredds/dodsC/meps25epsarchive/2023/04/30/meps_det_2_5km_20230430T00Z.nc?air_temperature_ml[0:1:0][0:1:64][0:1:1068][0:1:948]
-    archive = "https://thredds.met.no/thredds/dodsC/meps25epsarchive"
     subdir(dt) = Dates.format(dt,"yyyy/mm/dd")
     filename(dt) = "meps_det_2_5km_$(Dates.format(dt,"yyyymmddTHHZ.nc"))"
     bgurl = joinpath(archive,subdir(dt-fcint), filename(dt-fcint))

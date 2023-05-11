@@ -1,7 +1,7 @@
 using GLMakie, NCDatasets, Statistics, Dates
 
 
-dt = Dates.DateTime(2019,08,18,15)
+dt = Dates.DateTime(2019,08,18,03)
 fcint = Hour(3)
 dtf = Dates.format(dt,"yyyymmddHH")
 dtp = Dates.format(dt-fcint,"yyyymmddHH")
@@ -93,19 +93,19 @@ end
 
 set_theme!(theme_light())
 fig = Figure() 
-# s1 = Slider(fig[1:1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
+s1 = Slider(fig[1:1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
 
 
-field = fields[2]
+field = fields[1]
 lev = Observable(65)
-a1 = makesurfplot(fig[1,1],bgds1,ands1,field,lev,surfbg=false ,xrange=xrange, yrange=yrange)
+a1 = makesurfplot(fig[1,2],bgds1,ands1,field,s1.value,surfbg=false ,xrange=xrange, yrange=yrange)
  fig
-a2 = makesurfplot(fig[2,1],bgds2,ands2,field,lev,surfbg=false,xrange=xrange, yrange=yrange)
+a2 = makesurfplot(fig[2,2],bgds2,ands2,field,s1.value,surfbg=false,xrange=xrange, yrange=yrange)
 
 
-ax = Axis(fig[1:2,2], yreversed=true,title="RMS", width=200, yaxisposition = :right,yticks=65:-5:0)
-px1 = makeprofplot(ax,bgds1,ands1,field,lev,label="envar")
-px2 = makeprofplot(ax,bgds2,ands2,field,lev,label="3dvar")
+ax = Axis(fig[1:2,3], yreversed=true,title="RMS", width=200, yaxisposition = :right,yticks=65:-5:0)
+px1 = makeprofplot(ax,bgds1,ands1,field,s1.value,label="envar")
+px2 = makeprofplot(ax,bgds2,ands2,field,s1.value,label="3dvar")
 tightlimits!(ax)
 
 Legend(fig[3, :],ax, orientation=:horizontal, tellheight=true ) 
@@ -118,7 +118,7 @@ a1.elevation[] =  a2.elevation[] = pi/2-0.4
 a1.azimuth[] = a2.azimuth[] = -1.7
 xlims!(a1,1,637); xlims!(a2,1,637)
 ylims!(a1,1,637); ylims!(a2,1,637)
-zlims!(a1,-1.5,1.5); zlims!(a2,-1.5,1.5)
+# zlims!(a1,-1.5,1.5); zlims!(a2,-1.5,1.5)
 
 
 function f(levs) 
@@ -131,9 +131,9 @@ function f(levs)
     autolimits!(a2)
 
 end
+fig
 
-
-record(f,fig, "envar_3dvar_huminc.mp4", levels; framerate = 3) 
+#record(f,fig, "envar_3dvar_huminc.mp4", levels; framerate = 3) 
     # lev[] = levs
     
 
