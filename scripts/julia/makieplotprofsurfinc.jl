@@ -1,7 +1,9 @@
 using GLMakie, NCDatasets, Statistics, Dates
+Makie.inline!(false)
+set_theme!(theme_light())
+GLMakie.set_window_config!(;float=true)
 
-
-dt = Dates.DateTime(2019,08,18,03)
+dt = Dates.DateTime(2019,08,18,15)
 fcint = Hour(3)
 dtf = Dates.format(dt,"yyyymmddHH")
 dtp = Dates.format(dt-fcint,"yyyymmddHH")
@@ -58,7 +60,7 @@ function makesurfplot(fig,bgds,ands,var,lev::Observable; surfbg=false,xrange=:,y
     ax        
 end
 
-function makeprofplot(ax,bgds,ands,var,lev::Observable;label)
+function makeprofplot(ax,bgds,ands,var,lev::Observable;label,color)
     nlev = 65
  #   ax = Axis(fig, 
  #           yreversed=true,
@@ -67,15 +69,23 @@ function makeprofplot(ax,bgds,ands,var,lev::Observable;label)
      #       width=100,
   #          yaxisposition = :right
   #       )
-    val = zeros(nlev)
+    rms = zeros(nlev)
+    means = zeros(nlev)
+    
     for lev in 1:nlev
         field = "S$(lpad(lev,3,"0"))$var"
         inc = ands[field][:,:] - bgds[field][:,:]
-        val[lev]= sqrt(mean(inc.^2))
+        rms[lev]= sqrt(mean(inc.^2))
+        means[lev]= mean(inc)
     end
-    lines!(ax, val, 1:65, label=label)
-    pval = lift( lev -> val[lev], lev)
-    plt = scatter!(ax, pval, lev, color=:blue, markersize=20)
+#    lines!(ax, rms, 1:65, label=label,linestyle=:dash,color=color)
+    lines!(ax, means, 1:65, label=label,color=color)
+    
+    pval = lift( lev -> rms[lev], lev)
+ #   scatter!(ax, pval, lev, color=color, markersize=20)
+    mval = lift( lev -> means[lev], lev)
+    scatter!(ax, mval, lev, color=color, markersize=20)
+    
     # scatter!(plt, pval, lev)
     # scatter!(ax, val[lev.val], lev.val, color=:blue, markersize=10)
     ax         
@@ -91,25 +101,30 @@ end
 
 # xrange=200:400; yrange=1:250 # Germany
 
-set_theme!(theme_light())
+
 fig = Figure() 
 s1 = Slider(fig[1:1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
 
 
 field = fields[1]
 lev = Observable(65)
-a1 = makesurfplot(fig[1,2],bgds1,ands1,field,s1.value,surfbg=false ,xrange=xrange, yrange=yrange)
- fig
-a2 = makesurfplot(fig[2,2],bgds2,ands2,field,s1.value,surfbg=false,xrange=xrange, yrange=yrange)
+surfbg=false
+a1 = makesurfplot(fig[1,2],bgds1,ands1,field,s1.value,surfbg=surfbg, xrange=xrange, yrange=yrange)
+fig
+a2 = makesurfplot(fig[1,3],bgds2,ands2,field,s1.value,surfbg=surfbg, xrange=xrange, yrange=yrange)
 
 
-ax = Axis(fig[1:2,3], yreversed=true,title="RMS", width=200, yaxisposition = :right,yticks=65:-5:0)
-px1 = makeprofplot(ax,bgds1,ands1,field,s1.value,label="envar")
-px2 = makeprofplot(ax,bgds2,ands2,field,s1.value,label="3dvar")
+ax = Axis(fig[1,4], yreversed=true,title="MEAN/RMS", width=200, yaxisposition = :right,yticks=65:-5:0)
+px1 = makeprofplot(ax,bgds1,ands1,field,s1.value,label="envar",color=:blue)
+px2 = makeprofplot(ax,bgds2,ands2,field,s1.value,label="3dvar",color=:red)
 tightlimits!(ax)
 
-Legend(fig[3, :],ax, orientation=:horizontal, tellheight=true ) 
+Legend(fig[2, :],ax, orientation=:horizontal, tellheight=true ) 
+Makie.inline!(false)
 fig
+
+
+
 
 
 levels=65:-1:1
@@ -131,6 +146,7 @@ function f(levs)
     autolimits!(a2)
 
 end
+Makie.inline!(false)
 fig
 
 #record(f,fig, "envar_3dvar_huminc.mp4", levels; framerate = 3) 

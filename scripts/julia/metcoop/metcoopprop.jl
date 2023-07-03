@@ -20,7 +20,7 @@ ands,bgds = getanbg_lustre(dtg)
 
 fig = Figure(resolution=(1600,1200))
 sdt = Slider(fig[2,2], range = 0:60, startvalue = 0,horizontal=true)
-slev = Slider(fig[1,1], range = 65:-1:1, startvalue = 40,horizontal=false)
+slider_lev = Slider(fig[1,1], range = 65:-1:1, startvalue = 65,horizontal=false)
 
 var=vars[2]
 andf = @lift(ands[$var][:,:,$(slev.value),$(sdt.value)+1])

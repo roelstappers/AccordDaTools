@@ -1,11 +1,12 @@
 using GLMakie, NCDatasets, Statistics, Dates, FileTrees
 
-const archive="/lustre/storeB/immutable/archive/projects/metproduction/MEPS/"
-const fcint = Hour(3)
+archive="/lustre/storeB/immutable/archive/projects/metproduction/MEPS/"
+fcint = Hour(3)
 
-dtgbeg = Dates.DateTime(2023,01,01,00)
-dtgend = Dates.DateTime(2023,02,01,00)
+dtgbeg = Dates.DateTime(2022,06,01,09)
+dtgend = Dates.DateTime(2023,06,01,09)
 dtrange = dtgbeg:fcint:dtgend
+dtrange = dtgbeg:Hour(24):dtgend
 
 vars = ["air_temperature_ml", "specific_humidity_ml","x_wind_ml","y_wind_ml"]
 varlabels = ["T","q","u","v"]
@@ -15,6 +16,7 @@ dtg  = Observable(dtgbeg)
 
 
 constructpath(x) = Dates.format(x,"yyyy/mm/dd") *"/meps_det_2_5km_" * Dates.format(x,"yyyymmddTHHZ.nc")
+
 
 
 
@@ -30,7 +32,7 @@ fcslider = Slider(fig[2,2], range = 0:60, startvalue = 0, horizontal=true)
 anfilename = lift(x-> constructpath(x), dtgmenu.selection)
 bgfilename = lift(x-> constructpath(x-fcint), dtgmenu.selection)
 
-# dtg = Observable(dtgbeg)
+dtg = Observable(dtgbeg)
 
 on(dtgmenu.selection) do dtgi
     anfilename[] = constructpath(dtgi)
@@ -69,13 +71,19 @@ ax = Axis(fig[1,2], title=title)
 hidedecorations!(ax)
 hidespines!(ax)
 # plt = surface!(ax,inc,color=inc, colormap=Reverse(:RdBu), colorrange=crange)
-plt = heatmap!(ax,inc, colormap=Reverse(:RdBu), colorrange=crange)
+plt = heatmap!(ax,inc, colormap=Reverse(:RdBu), colorrange=(-3,3))
 
 Colorbar(fig[1,3],plt)
+Makie.inline!(false)
 fig
 
-
-
+hotkey = Keyboard.a
+on(events(fig).keyboardbutton) do event
+    if ispressed(fig, hotkey)
+        println("hotkey pressed")
+    end
+end
+fig
 
 #ft = FileTree("$archive/2023/01/")
 

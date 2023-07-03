@@ -3,9 +3,10 @@ using Dates, Statistics, NCDatasets, CSV
 archive="/lustre/storeB/immutable/archive/projects/metproduction/MEPS/"
 fcint  = Hour(3) 
 nlev=65
-
+# SURFPRESSION
 vars = ["air_temperature_ml", "specific_humidity_ml","x_wind_ml","y_wind_ml"]
 var  = vars[1]
+
 
 dspath(dtg) = joinpath(archive,Dates.format(dtg,"yyyy/mm/dd"), "meps_det_2_5km_$(Dates.format(dtg,"yyyymmddTHHZ.nc"))") 
 
