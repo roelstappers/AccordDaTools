@@ -24,7 +24,8 @@ archive="/lustre/storeB/immutable/archive/projects/metproduction/MEPS/"
 begin 
 fcint = Hour(3)
 #dtgbeg = Dates.DateTime(2023,06,01,03)
-dtgbeg = Dates.DateTime(2023,05,01,09)
+dtgbeg = Dates.DateTime(2023,04,01,09)
+# dtgbeg = Dates.DateTime(2023,01,01,00)
 vars = ["air_temperature_ml", "specific_humidity_ml","x_wind_ml","y_wind_ml"]
 constructpath(x) = "$(Dates.format(x,"yyyy/mm/dd"))/meps_det_2_5km_$(Dates.format(x,"yyyymmddTHHZ.nc"))"
 	
@@ -63,12 +64,16 @@ begin
 	)	
 
 	
-	crange=(-1.5,1.5)
+	crange=(-0.8,0.8)
+	#crange=(-2,2)
+	#crange=(-3,3)
+	
 	vcval = vc =="hybrid" ? hyb : 1:65
 	plt= surface!(ax,vcval, timev, field[xi2,yi2,1:65,1:4],colorrange=crange,colormap= Reverse(:RdBu))
     Colorbar(fig[1,2],plt)
-	#display(fig)
-	fig	
+	# display(fig)
+	
+	fig
 end
 
 # ╔═╡ f09918c4-928e-43e4-89e6-1840b86534ba
@@ -96,7 +101,30 @@ begin
 end 
 
 # ╔═╡ 3703fd23-63d7-4ce1-9af8-b3a6ea9048aa
+begin 
+	figvol  = Figure() 
+	lv = 8:10
+	lv = [100,500,700]
+	levs = 1:30
+	# lv = 62:65
+	 axvol11  = Axis(figvol[1,1],title="X $(lv[1])",yreversed=true) 
+	heatmap!(axvol11, field[lv[1],:,levs,1],colormap=Reverse(:RdBu),colorrange=crange)
+	axvol21  = Axis(figvol[2,1],title="X $(lv[2])",yreversed=true) 
+	heatmap!(axvol21,field[lv[2],:,levs,1], colormap=Reverse(:RdBu),colorrange=crange)
+    axvol31  = Axis(figvol[3,1],title="X $(lv[3])",yreversed=true) 
+	heatmap!(axvol31,field[lv[3],:,levs,1], colormap=Reverse(:RdBu),colorrange=crange)
+	
+	axvol12  = Axis(figvol[1,2], title="X $(lv[1])",yreversed=true) 	
+	heatmap!(axvol12, field[lv[1],:,levs,4],colormap=Reverse(:RdBu),colorrange=crange)
+	axvol22  = Axis(figvol[2,2],title="X $(lv[2])",yreversed=true) 	
+	heatmap!(axvol22 ,field[lv[2],:,levs,4], colormap=Reverse(:RdBu),colorrange=crange)
+	axvol32  = Axis(figvol[3,2],title="X $(lv[3])",yreversed=true) 	
+	hm2 = heatmap!(axvol32 ,field[lv[3],:,levs,4], colormap=Reverse(:RdBu),colorrange=crange)
 
+	Colorbar(figvol[:,3],hm2)
+	# contour!(axvol, field[100,:,:,:],colormap=Reverse(:RdBu))
+	figvol
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
