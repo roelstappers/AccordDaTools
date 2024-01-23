@@ -3,7 +3,7 @@ Makie.inline!(false)
 set_theme!(theme_light())
 GLMakie.set_window_config!(;float=true)
 
-dt = Dates.DateTime(2019,08,18,15)
+dt = Dates.DateTime(2019,08,18,03)
 fcint = Hour(3)
 dtf = Dates.format(dt,"yyyymmddHH")
 dtp = Dates.format(dt-fcint,"yyyymmddHH")
@@ -114,7 +114,7 @@ fig
 a2 = makesurfplot(fig[1,3],bgds2,ands2,field,s1.value,surfbg=surfbg, xrange=xrange, yrange=yrange)
 
 
-ax = Axis(fig[1,4], yreversed=true,title="MEAN/RMS", width=200, yaxisposition = :right,yticks=65:-5:0)
+ax = Axis(fig[1,4], yreversed=true,title="Mean", width=200, yaxisposition = :right,yticks=65:-5:0)
 px1 = makeprofplot(ax,bgds1,ands1,field,s1.value,label="envar",color=:blue)
 px2 = makeprofplot(ax,bgds2,ands2,field,s1.value,label="3dvar",color=:red)
 tightlimits!(ax)

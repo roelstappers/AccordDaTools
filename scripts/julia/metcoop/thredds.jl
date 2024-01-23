@@ -1,7 +1,7 @@
 using GLMakie, NCDatasets, Dates
 
 fcint = Hour(3); nlat=1069; nlon=949; nlev=65  # METCOOP25D
-fcint = Hour(3); nlat=300; nlon=300; nlev=65  # METCOOP25D
+#fcint = Hour(3); nlat=300; nlon=300; nlev=65  # METCOOP25D
 
 mepsurl="https://thredds.met.no/thredds/dodsC/meps25epsarchive"
 
@@ -13,11 +13,12 @@ an(dtg,lev,var,ll) = NCDataset(url(dtg) * querystr(ll,lev,var))
 
 
 dtg = Observable(Dates.DateTime(2023,01,01,00))
-var = Observable("air_temperature_ml")   # vars = ["air_temperature_ml", "specific_humidity_ml","x_wind_ml","y_wind_ml"]
+var = Observable("air_temperature_ml")   
+varq = "specific_humidity_ml" # ,"x_wind_ml","y_wind_ml"]
 lev = Observable(65)
 ll = Observable(0)
 
-inc = @lift(an($dtg,$lev,$var,$ll)[$var][:,:,1,1] - bg($dtg,$lev,$var,$ll)[$var][:,:,1,1])
+incq = @lift(an($dtg,$lev,$varq,$ll)[$varq][:,:,1,1] - bg($dtg,$lev,$varq,$ll)[$varq][:,:,1,1])
 
 
 fig = Figure()
@@ -31,7 +32,8 @@ ax = Axis(fig[1,1],title=title)
 #hidespines!(ax)
 
 #plt = surface!(ax,inc,color=inc, colormap=Reverse(:RdBu), colorrange=crange)
- plt = heatmap!(ax,inc, colormap=Reverse(:RdBu), colorrange=crange)
+ plt = heatmap!(ax,incT, colormap=Reverse(:RdBu), colorrange=crange)
+ plt = heatmap!(ax,incq, colormap=Reverse(:RdBu), colorrange=crange)
 
 Colorbar(fig[1,2],plt)
 fig
