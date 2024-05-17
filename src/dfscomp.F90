@@ -49,7 +49,7 @@ IMPLICIT NONE
  LOGICAL            :: LEX
  INTEGER            :: INUM,IERR
  INTEGER            :: NUN1,NUN2,NUN3
- INTEGER, PARAMETER :: NUMV=27
+ INTEGER, PARAMETER :: NUMV=28
  REAL               :: ZDFS(NUMV)
  INTEGER            :: NDFS(NUMV)
  INTEGER            :: ITOT,INOTC,ICHAN
@@ -182,6 +182,7 @@ IMPLICIT NONE
 !    25 : RADAR_Z
 !    26 : RADAR_U
 !    27 : TEMP_CLS
+!    28 : SGNSS
 
 
   IF (IOT1 .EQ. 1 ) THEN
@@ -266,6 +267,10 @@ IMPLICIT NONE
       IF (IOV1.EQ.195) IIND=26
   ENDIF
 
+  ! SGNSS
+  IF (IOT1 .EQ. 19) IIND=28
+
+  
   IF (IIND .EQ. 0 ) THEN
      INOTC = INOTC + 1
      ! This should not happen

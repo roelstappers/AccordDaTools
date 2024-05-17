@@ -1,5 +1,6 @@
 # AccordDaTools
 Collection of ACCORD DA tools. So far we have jbdiagnose and associated plotting. 
+Also available is DFS calculation and associated plotting.
 
 Desirables:
 - festat
@@ -59,3 +60,27 @@ Example:
 plotjbdiag -l 50 -t vercor -p QQ -r ./ -e IRELAND75L65 
 ```
 
+### DFS
+The dfscomp tool reads the (ASCII) data from an unperturbed CCMA and a perturbed CCMA.
+
+#### Calculate DFS
+Help/usage:
+```
+scripts/dfscomp.sh -h
+```
+
+Example:
+```
+scripts/dfscomp.sh -u $DTG_CCMA_unpert.dat -p $DTG_CCMA.dat -o dfs.dat 
+```
+
+#### Plot DFS
+Help/usage:
+```
+python3 scripts/plotdfs.py -h
+```
+
+Example:
+```
+python3 scripts/plotdfs.py -i dfs.dat
+```
