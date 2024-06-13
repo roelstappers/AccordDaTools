@@ -4,25 +4,33 @@ using GLMakie, NCDatasets, Statistics
 include("util.jl")
 
 
-var = "S090TEMPERATURE"; scale=10
-# var = "S085HUMI.SPECIFI"; scale= 10000
+url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/2024/06/01/meps_lagged_6_h_subset_2_5km_20240601T00Z.nc"
 
-ds = Dataset("/home/roels/data/beni_ens/lam_ens/$var.nc")
+ds = Dataset(url)
+
+pressure_levels = ds["pressure"][:]  # 300,500,700,850,925,1000
+varname = "air_temperature_pl" 
+
+var = ds[varname]
 
 
-fld = nomissing(ds[var][:,:,:])
+fctime=0  
+pres_lev = 6   
 
-X,m,stdd = splitstdmean(fld)
+fld = nomissing(var[:,:,:,pres_lev,1+fctime])
+
+X,meanfld,stdfld = splitstdmean(fld)
  
-mbr = Observable(1)
-out = @lift scale*fld[:,:,$mbr]
+#mbr = Observable(1)
+#out = @lift scale*fld[:,:,$mbr]
 
-colorrange=(minimum(stdd),maximum(stdd))
+# colorrange=(minimum(stdd),maximum(stdd))
 
 fig = Figure()
-ax = Axis(fig[1,1],title="Ensemble mean $var lam, color= std")
-plt = surface!(ax,out,color=stdd, colormap=:jet,colorscale=log10  ,colorrange=colorrange)
-Colorbar(fig[1,2],plt)
+title = "Ensemble mean $varname $(pressure_levels[pres_lev]) hPa"
+ax = Axis3(fig[1,1],title=title)
+plt = surface!(ax,meanfld,color=stdfld, colormap=:jet,colorscale=log10) #   ,colorrange=colorrange)
+Colorbar(fig[1,2],plt,label="std")
 tightlimits!(ax)
 fig
 

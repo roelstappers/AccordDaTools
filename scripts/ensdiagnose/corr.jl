@@ -1,35 +1,36 @@
 
-using GLMakie, Dates 
-using NCDatasets, Statistics, LinearAlgebra, TensorOperations
+#using GLMakie, Dates 
+#using NCDatasets, Statistics, LinearAlgebra, 
+using TensorOperations
 include("events.jl")
 include("util.jl")
 
-var = "S085HUMI.SPECIFI"
+# var = "S085HUMI.SPECIFI"
 # var = "S085TEMPERATURE"
 
 
-ds = Dataset("/home/roels/data/beni_ens/lam_ens/$var.nc")
+#ds = Dataset("/home/roels/data/beni_ens/lam_ens/$var.nc")
 
-fld1 = nomissing(ds[var][:,:,:])
+#fld1 = nomissing(ds[var][:,:,:])
 
 
-X1, meanfld1, stdfld1 =  splitstdmean(fld1) 
+# X, meanfld1, stdfld1 =  splitstdmean(fld1) 
 
 # Observables
 lat  = Observable(500)  
 lon  = Observable(500) 
 
-Y1p = @lift X1[$lon,$lat,:]   
+Yp = @lift X[$lon,$lat,:]   
 
 out(X,Y) = @tensor  out[x,y] :=  X[x,y,m]*Y[m]
 
-out1 = @lift 10*out(X1,$Y1p) 
+out1 = @lift 10*out(X,$Yp) 
 
 
 fig = Figure() 
 colormap = Reverse(:RdBu) #   ["blue", "white", "white", "red"] 
 ax1 = Axis(fig[1,1])
-plt1 = surface!(ax1,meanfld1,color=out1,colormap=colormap ,colorrange=(-10,10)) # (-1,1))
+plt1 = surface!(ax1,meanfld,color=out1,colormap=colormap ,colorrange=(-10,10)) # (-1,1))
 scatter!(ax1,lon,lat,color=:green,markersize=20,overdraw=true)
 cb1 = Colorbar(fig[2,1], plt1, flipaxis=false,vertical=false)
 
@@ -38,7 +39,7 @@ deactivate_interaction!(ax1, :rectanglezoom)
 deactivate_interaction!(ax1, :dragpan)
 
 events_pointpicker(ax1, lon,lat)
-events_scatterplot(ax1,X1,lon,lat)
+events_scatterplot(ax1,X,lon,lat)
 
 hidedecorations!(ax1)
 tightlimits!(ax1)
