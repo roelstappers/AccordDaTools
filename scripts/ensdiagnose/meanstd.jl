@@ -4,20 +4,17 @@ using GLMakie, NCDatasets, Statistics
 include("util.jl")
 
 
-url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/2024/06/01/meps_lagged_6_h_subset_2_5km_20240601T00Z.nc"
+# Use this to download data from MEPS 
+# url="https://thredds.met.no/thredds/dodsC/meps25epsarchive/2024/06/01/meps_lagged_6_h_subset_2_5km_20240601T00Z.nc"
+
+
+var="S085HUMI.SPECIFI"
+url="/home/roels/data/beni_ens/lam_ens/$var.nc"
+
 
 ds = Dataset(url)
 
-pressure_levels = ds["pressure"][:]  # 300,500,700,850,925,1000
-varname = "air_temperature_pl" 
-
-var = ds[varname]
-
-
-fctime=0  
-pres_lev = 6   
-
-fld = nomissing(var[:,:,:,pres_lev,1+fctime])
+fld = nomissing(ds[var][:,:,:])
 
 X,meanfld,stdfld = splitstdmean(fld)
  
@@ -27,7 +24,7 @@ X,meanfld,stdfld = splitstdmean(fld)
 # colorrange=(minimum(stdd),maximum(stdd))
 
 fig = Figure()
-title = "Ensemble mean $varname $(pressure_levels[pres_lev]) hPa"
+title = "Ensemble mean $var"
 ax = Axis3(fig[1,1],title=title)
 plt = surface!(ax,meanfld,color=stdfld, colormap=:jet,colorscale=log10) #   ,colorrange=colorrange)
 Colorbar(fig[1,2],plt,label="std")
